@@ -59,6 +59,35 @@ export class CjService {
     // This is a placeholder for the logic
     return { success: true, cjOrderId: "CJ_" + Date.now() };
   }
+
+  async calculateShipping(
+    startCountryCode: string = "CN",
+    endCountryCode: string,
+    vid: string,
+    quantity: number = 1
+  ): Promise<any[]> {
+    const token = await getAccessToken();
+
+    const payload = {
+      startCountryCode,
+      endCountryCode,
+      products: [
+        {
+          quantity,
+          vid,
+        },
+      ],
+    };
+
+    const response = await cjClient.post("/logistic/freightCalculate", payload, {
+      headers: { "CJ-Access-Token": token },
+    });
+
+    if (response.data?.code === 200 && response.data?.data) {
+      return response.data.data;
+    }
+    return [];
+  }
 }
 
 export const cjService = new CjService();

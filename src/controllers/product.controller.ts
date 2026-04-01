@@ -103,3 +103,34 @@ export const getProductsByCategory = async (
     next(err);
   }
 };
+
+export const getShippingCost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { variantId, countryCode, quantity, startCountryCode } = req.query;
+
+    if (!variantId || !countryCode) {
+      return res.status(400).json({
+        success: false,
+        message: "variantId and countryCode are required",
+      });
+    }
+
+    const shippingMethods = await productService.calculateShipping(
+      countryCode as string,
+      variantId as string,
+      parseInt(quantity as string) || 1,
+      startCountryCode ? (startCountryCode as string) : "CN"
+    );
+
+    res.status(200).json({
+      success: true,
+      data: shippingMethods,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

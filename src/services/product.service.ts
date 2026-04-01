@@ -179,6 +179,23 @@ export class ProductService {
     const total = await Product.countDocuments(filter);
     return { products, total, page, limit };
   }
+
+  /**
+   * Calculate shipping for a variant to a destination
+   */
+  async calculateShipping(
+    endCountryCode: string,
+    variantId: string,
+    quantity: number = 1,
+    startCountryCode: string = "CN",
+  ) {
+    return await cjService.calculateShipping(
+      startCountryCode,
+      endCountryCode,
+      variantId,
+      quantity,
+    );
+  }
 }
 
 export const productService = new ProductService();
