@@ -1,13 +1,17 @@
-import { cjClient, getAccessToken } from '../config/cjApi';
-import { ICjProduct } from '../types/product.types';
+import { cjClient, getAccessToken } from "../config/cjApi";
+import { ICjProduct } from "../types/product.types";
 
 export class CjService {
-  async fetchProducts(keyword: string = 'hoodie', page: number = 1, size: number = 20): Promise<any[]> {
+  async fetchProducts(
+    keyword: string = "hoodie",
+    page: number = 1,
+    size: number = 20,
+  ): Promise<any[]> {
     const token = await getAccessToken();
 
-    const response = await cjClient.get('/product/listV2', {
-      params: { page, size, keyWord: keyword, sort: 'desc', orderBy: '0' },
-      headers: { 'CJ-Access-Token': token },
+    const response = await cjClient.get("/product/listV2", {
+      params: { page, size, keyWord: keyword, sort: "desc", orderBy: "0" },
+      headers: { "CJ-Access-Token": token },
     });
 
     const content = response.data?.data?.content || [];
@@ -26,9 +30,9 @@ export class CjService {
   async fetchProductDetail(productId: string): Promise<ICjProduct | null> {
     const token = await getAccessToken();
 
-    const response = await cjClient.get('/product/query', {
+    const response = await cjClient.get("/product/query", {
       params: { pid: productId },
-      headers: { 'CJ-Access-Token': token },
+      headers: { "CJ-Access-Token": token },
     });
 
     if (response.data?.code === 200 && response.data?.data) {
@@ -40,7 +44,7 @@ export class CjService {
   async placeOrder(orderPayload: any) {
     // API endpoint for placing order with CJ Dropshipping. Look into actual CJ Dropshipping docs to map correctly
     // This is a placeholder for the logic
-    return { success: true, cjOrderId: 'CJ_' + Date.now() };
+    return { success: true, cjOrderId: "CJ_" + Date.now() };
   }
 }
 

@@ -9,6 +9,6 @@ const router = Router();
 
 router.get("/search", searchCjProducts);
 router.post("/sync", syncProductsToDb);
-router.get("/product/:id", getCjProductDetail); // Fetch full detail from CJ and save to DB
+router.get("/product/:id", getCjProductDetail);
 
 export default router;
