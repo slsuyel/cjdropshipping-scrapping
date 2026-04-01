@@ -40,7 +40,29 @@ export const syncProductsToDb = async (
     res.status(200).json({
       success: true,
       message: `Synced ${products.length} products to DB`,
+      data: products,
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCjProductDetail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const cjProductId = req.params.id as string;
+    const product = await productService.fetchAndStoreFullDetail(cjProductId);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found on CJ" });
+    }
+
+    res.status(200).json({ success: true, data: product });
   } catch (err) {
     next(err);
   }

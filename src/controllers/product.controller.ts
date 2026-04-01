@@ -32,7 +32,9 @@ export const getProductById = async (
   next: NextFunction,
 ) => {
   try {
-    const product = await productService.getProductById(req.params.id as string);
+    const product = await productService.getProductById(
+      req.params.id as string,
+    );
 
     if (!product) {
       return res
