@@ -10,6 +10,13 @@ export class ProductService {
     return { products, total, page, limit };
   }
 
+  private parsePrice(priceVal: any): number {
+    if (typeof priceVal === "number") return priceVal;
+    if (!priceVal) return 0;
+    const match = String(priceVal).match(/[\d.]+/);
+    return match ? parseFloat(match[0]) : 0;
+  }
+
   async syncCjToDb(keyword: string) {
     const cjProducts = await cjService.fetchProducts(keyword);
 
@@ -19,8 +26,8 @@ export class ProductService {
         { cjProductId: p.id },
         {
           title: p.nameEn,
-          price: p.sellPrice,
-          originalPrice: p.nowPrice,
+          price: this.parsePrice(p.sellPrice),
+          originalPrice: this.parsePrice(p.nowPrice),
           image: p.bigImage,
           images: p.productImageSet || [],
           category: p.threeCategoryName,
