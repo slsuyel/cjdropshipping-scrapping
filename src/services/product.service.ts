@@ -144,6 +144,41 @@ export class ProductService {
 
     return product;
   }
+
+  /**
+   * Search products in DB by category name (matches any level)
+   */
+  async getProductsByCategory(categoryName: string, page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const filter = {
+      $or: [
+        { "category.name": { $regex: new RegExp(categoryName, "i") } },
+        { "category.level1.name": { $regex: new RegExp(categoryName, "i") } },
+        { "category.level2.name": { $regex: new RegExp(categoryName, "i") } },
+      ],
+    };
+
+    const products = await Product.find(filter).skip(skip).limit(limit);
+    const total = await Product.countDocuments(filter);
+    return { products, total, page, limit };
+  }
+
+  /**
+   * Search products in DB by keyword (title or description)
+   */
+  async searchProducts(query: string, page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const filter = {
+      $or: [
+        { title: { $regex: new RegExp(query, "i") } },
+        { description: { $regex: new RegExp(query, "i") } },
+      ],
+    };
+
+    const products = await Product.find(filter).skip(skip).limit(limit);
+    const total = await Product.countDocuments(filter);
+    return { products, total, page, limit };
+  }
 }
 
 export const productService = new ProductService();

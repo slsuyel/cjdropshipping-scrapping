@@ -41,6 +41,19 @@ export class CjService {
     return null;
   }
 
+  async fetchCategories(): Promise<any[]> {
+    const token = await getAccessToken();
+
+    const response = await cjClient.get("/product/getCategory", {
+      headers: { "CJ-Access-Token": token },
+    });
+
+    if (response.data?.code === 200 && response.data?.data) {
+      return response.data.data;
+    }
+    return [];
+  }
+
   async placeOrder(orderPayload: any) {
     // API endpoint for placing order with CJ Dropshipping. Look into actual CJ Dropshipping docs to map correctly
     // This is a placeholder for the logic

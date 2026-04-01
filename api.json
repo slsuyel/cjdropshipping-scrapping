@@ -1,0 +1,194 @@
+{
+  "info": {
+    "name": "Full E-Commerce Backend (CJ Integration)",
+    "description": "Full collection for Products, Categories, CJ Syncing, and Orders.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Meta",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products (Local DB)",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "products"]
+            }
+          }
+        },
+        {
+          "name": "Get Product by ID (Auto-Enrich)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "products", ":id"]
+            }
+          },
+          "description": "Finds in DB. If full details (variants/specs) are missing, it fetches from CJ and saves them automatically."
+        },
+        {
+          "name": "Search Keyword (Local)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/search?q=phone",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "products", "search"],
+              "query": [{ "key": "q", "value": "phone" }]
+            }
+          }
+        },
+        {
+          "name": "Filter by Category Name (Local)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/category/Office Supplies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "products", "category", "Office Supplies"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Sync Categories (CJ -> DB)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories/sync",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories", "sync"]
+            }
+          }
+        },
+        {
+          "name": "Get All Categories Tree",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Search Categories in Tree",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories/search?q=Office",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "categories", "search"],
+              "query": [{ "key": "q", "value": "Office" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "CJ Dropshipping (Bridge)",
+      "item": [
+        {
+          "name": "Live Search CJ Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cj/search?keyword=hoodie",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "cj", "search"],
+              "query": [{ "key": "keyword", "value": "hoodie" }]
+            }
+          }
+        },
+        {
+          "name": "Sync List to DB",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"keyword\": \"electronics\"}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cj/sync",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "cj", "sync"]
+            }
+          }
+        },
+        {
+          "name": "Fetch & Store Full Detail by CJ Pid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cj/product/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "cj", "product", ":id"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [{\n    \"productId\": \"MONGO_DOC_ID\",\n    \"variantId\": \"CJ_VARIANT_ID\",\n    \"quantity\": 1\n  }],\n  \"shippingAddress\": {\n    \"fullName\": \"John Doe\", \"street\": \"123 St\", \"city\": \"NY\", \"state\": \"NY\", \"zipCode\": \"10001\", \"country\": \"USA\", \"phone\": \"+123\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "orders"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "jwtToken", "value": "PASTE_TOKEN_HERE" }
+  ]
+}

@@ -47,3 +47,59 @@ export const getProductById = async (
     next(err);
   }
 };
+
+export const searchProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const query = (req.query.q as string) || "";
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+
+    const data = await productService.searchProducts(query, page, limit);
+
+    res.status(200).json({
+      success: true,
+      data: data.products,
+      pagination: {
+        total: data.total,
+        page: data.page,
+        limit: data.limit,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getProductsByCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const category = req.params.category as string;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+
+    const data = await productService.getProductsByCategory(
+      category,
+      page,
+      limit,
+    );
+
+    res.status(200).json({
+      success: true,
+      data: data.products,
+      pagination: {
+        total: data.total,
+        page: data.page,
+        limit: data.limit,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
